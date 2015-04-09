@@ -1,0 +1,8 @@
+Temporary it uses 2 buffers: stdin and stdout. 
+Stdin is a memory block where is copied content from keyboard buffer when it is requested.
+Stdout is only a pointer to vga memory.
+
+I/O functions:
+	- printk -> write a formatted string to stdout (VGA memory only until implement pipes)
+	- inb, outb -> read/write a byte
+	- write -> write a buffer to stdout (VGA memory only until implement pipes)

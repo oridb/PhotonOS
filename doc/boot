@@ -1,0 +1,15 @@
+Photon OS boots using GRUB. When boots, a stack is defined for kernel (16384 bytes). After, multiboot structure is pushed on stack that kmain could access it.
+Before kmain is called, interrupts are disabled, so we are sure no interrupt will occur. If kmain reach end, interrupts will be disabled again (because in kmain were enabled) then proccessor will be halted in an infinite loop.
+
+When control is passed to kmain, it will do following steps:
+	- init system
+		- VGA driver
+		- interrupts
+		- PIT
+		- keyboard
+		- standard I/O
+		- paging
+	
+	- show welcome screen
+	- let user log in
+	- start shell

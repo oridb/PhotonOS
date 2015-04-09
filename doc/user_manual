@@ -1,0 +1,20 @@
+After kernel boots up, user must enter user name and machine name. Now, a shell has started. Here user can use some commands:
+
+	-> help -> display this page
+	-> time -> display current time
+	-> tick -> display current tick
+	-> clock -> start a clock that can be stoped when ESC is pressed
+	-> clear -> clear the screen
+	-> reset->clock -> set clock to 0
+	-> sys->info -> prints info about system
+	-> test -> enter into testing shell that allows testing kernel functions
+	-> exit -> close shell
+	
+Testing shell:
+	Tests avabile in testing shell:
+		-> exit -> close testing shell
+		-> print-stdin -> print all data from standard input
+		-> size -> print sizes of types, of kernel and RAM
+		-> page-fault -> generate page fault
+		-> address -> print addresses of all kernel variables and of some temporary
+		-> alloc -> test kmalloc and kfree
