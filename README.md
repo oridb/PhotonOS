@@ -10,9 +10,6 @@ Inspired from photon elementary particle, PhotonOS is light, fast and simple. It
 	- Some C Standard Library functions
 	- Virtual memory manager
 	- Real time clock
-	- Virtual file system
-	- Multitasking
-	- User mode enabled and system calls
 
 How to build?	
 ================
