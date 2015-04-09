@@ -15,16 +15,26 @@ How to build?
 ================
 
 You must have installed on your computer:
+
 	- a linux OS
+	
 	- i686-elf-gcc
+	
 	- i686-elf-ar
+	
 	- nasm
 
+
 Now, in source directory (PhotonOS/src) run following commands:
+
 	- ./configure.sh
+	
 	- ./clean.sh
+	
 	- ./build.sh
+	
 	- ./iso.sh
+
 
 Now, you will have in sysroot folder (PhotonOS/src/sysroot) the kernel ELF, boot configuration, headers and libs. In source directory (PhotonOS/src) you have a iso file with kernel.
 
