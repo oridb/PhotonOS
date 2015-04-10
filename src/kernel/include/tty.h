@@ -41,6 +41,11 @@ void tty_setcolor(uint8_t color);
 void tty_putentryat(char c, uint8_t color, size_t x, size_t y);
 
 /**
+  * Write a char in frame buffer.
+  */
+void tty_putchar(char c);
+
+/**
   * Write a string on the screen.
   */
 void tty_writestring(const char* data);
