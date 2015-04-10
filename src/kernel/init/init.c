@@ -18,7 +18,6 @@
 #include <task.h>
 #include <multiboot.h>
 
-
 #define FREQ 100
 uint8_t inbuffer[STDIN_SIZE];
 
@@ -33,28 +32,38 @@ void init(multiboot *mboot_ptr, uint32_t init_stack) {
 	init_esp = init_stack;
 
 	tty_init();
-	printk("Initialized tty.\n");
-
-	init_gdt();
-	printk("Initialized GDT.\n");
+	printk("%s %s (%s) by %s. Copyright C 2015 %s. All rights reserved.\n", OS_Name, Version, Relase_Date, Author, Author);
+	printk("VGA driver was installed!\n");
+	printk("Initialize tty.   ");
+	wstr_color("[OK]\n", COLOR_GREEN);
 	
-	init_idt();
-	printk("Initialized IDT and interrupts.\n");
-	
-	init_timer(FREQ);
-	printk("Install timer and clock.\n");
-	
+	printk("Initialize stdio (allow using of stdio header).   ");
 	init_stdio();
-	printk("Initialized stdio.\n");
+	wstr_color("[OK]\n", COLOR_GREEN);
 	
+	printk("Initialize GDT.   ");
+	init_gdt();
+	wstr_color("[OK]\n", COLOR_GREEN);
+	
+	printk("Initialize IDT and interrupts.   ");
+	init_idt();
+	wstr_color("[OK]\n", COLOR_GREEN);
+	
+	printk("Install timer and clock.   ");
+	init_timer(FREQ);
+	wstr_color("[OK]\n", COLOR_GREEN);
+	
+	printk("Install keyboard support.   ");
 	install_keyboard();
-	printk("Install keyboard support.\n");
+	wstr_color("[OK]\n", COLOR_GREEN);
 	
 	init_paging(mboot_ptr);
-	printk("Kernel starts at: %x\n", (size_t)&kernel_start);
-	printk("Kernel ends at: %x\n", (size_t)&kernel_end);
-	printk("RAM: %d MB\n", mem_size_mb);
-	printk("Paging initialized.\n");
+	printk("Initialize paging.   ");
+	wstr_color("[OK]\n", COLOR_GREEN);
+	printk("Memory info:\n");
+	printk("\tKernel starts at: %x\n", (size_t)&kernel_start);
+	printk("\tKernel ends at: %x\n", (size_t)&kernel_end);
+	printk("\tRAM: %d MB\n", mem_size_mb);
 	
 	/* tasking is useless, because switcher crashes every time
 	init_tasking();
@@ -66,7 +75,7 @@ void init(multiboot *mboot_ptr, uint32_t init_stack) {
 	task_t *clock_task = create_task(clock_task, &update_time, eflags, cr3);
 	*/
 
-	printk("Done!");
+	wstr_color("\nDONE!", COLOR_GREEN);
 	sti();
 	
 	getch();
