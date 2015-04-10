@@ -30,6 +30,9 @@ uint32_t inl(uint32_t ad);
 /* print registers */
 void print_regs(registers_t *regs);
 
+/* write char to stdout */
+int write_char(const char c);
+
 /* write string to stdout */
 int write(const char *buf, size_t len);
 
