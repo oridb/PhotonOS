@@ -57,10 +57,16 @@ void print_regs(registers_t *regs)
 	printk("int_no: %d\terr_code: %d\n\n", regs->int_no, regs->err_code);
 }
 
+int write_char(const char c)
+{
+	((unsigned char*) stdout)[out_crs] = c;
+	return 0;
+}
+
 int write(const char *buf, size_t len)
 {
 	for ( size_t i = 0; i < len; i++ )
-		putchar((int) ((const unsigned char*) buf)[i]);
+		putchar((int) ((const char*) buf)[i]);
 	return 0;
 }
 

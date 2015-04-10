@@ -11,6 +11,7 @@
 void* stdout;
 void* stdin;
 volatile int in_size;
+int out_crs;
 
 /**
   * Puts a char on the screen.
