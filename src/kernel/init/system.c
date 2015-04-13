@@ -47,7 +47,7 @@ static void testing_shell(char *str)
 			printk("*kheap: %x\n", *kheap);
 			getch();
 			
-			int *num = kmalloc(sizeof(int));
+			int *num = (int*) kmalloc(sizeof(int));
 			*num = 0x123ABC;
 			printk("num: %x\n", num);
 			printk("&num: %x\n", &num);
