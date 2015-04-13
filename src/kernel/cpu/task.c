@@ -33,7 +33,7 @@ void init_usermode() {
 
 void syscall_handler(registers_t *regs)
 {
-	if (regs->eax > num_syscalls)
+	if (regs->eax > (uint32_t) num_syscalls)
 		return;
 
 	void *location = syscalls[regs->eax - 1];
