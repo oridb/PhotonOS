@@ -93,7 +93,6 @@ void init_paging(multiboot *mboot_ptr)
 	frames = (uint32_t*)kmalloc(INDEX_FROM_BIT(nframes));
 	memset(frames, 0, INDEX_FROM_BIT(nframes));
 	
-	uint32_t phys;
 	kernel_directory = (page_directory_t*)kmalloc_a(sizeof(page_directory_t));
 	memset(kernel_directory, 0, sizeof(page_directory_t));
 	kernel_directory->physicalAddr = (uint32_t) kernel_directory->tablesPhysical;

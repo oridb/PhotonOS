@@ -81,7 +81,8 @@ void *alloc(uint32_t size, uint8_t page_align, heap_t *heap)
 
 		iterator = 0;
 
-		uint32_t idx = -1; uint32_t value = 0x0;
+		int32_t idx = -1;
+		uint32_t value = 0x0;
 		while (iterator < (int32_t) heap->index.size)
 		{
 		    uint32_t tmp = (uint32_t)lookup_list(iterator, &heap->index);
