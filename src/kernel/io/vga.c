@@ -67,7 +67,7 @@ void flush_video()
 		vga_row++;
 		vga_column = 0; 
 	}
-	tty_scroll(vga_row, vga_column);
+	tty_scroll(vga_row);
 	}
 	tty_move_cursor(vga_row, vga_column);
 }
@@ -75,6 +75,7 @@ void flush_video()
 void init_video()
 {
 	video_memory = (uint16_t*) 0xB8000;
+	vga_change = 0;
 	main_tty = tty_init(main_tty);
 	clear_video();
 }

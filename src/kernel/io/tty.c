@@ -37,7 +37,7 @@ void tty_clear()
 	}
 }
 
-void tty_scroll(int row, int column)
+void tty_scroll(int row)
 {
 	uint16_t blank = make_vgaentry(' ', make_color(default_fg, current_tty->bg));
 	
@@ -68,10 +68,7 @@ void tty_putchar(char c)
 	current_tty->buffer.text[current_tty->buffer.index] = c;
 	current_tty->buffer.fg[current_tty->buffer.index] = default_fg;
 	current_tty->buffer.index++;
-
-	if (c == '\n') {
-		flush_video();
-	}
+	vga_change = 1;
 }
 
 void tty_writestring(const char* data)
@@ -97,6 +94,8 @@ void tty_move_cursor(int row, int column)
 
 void clear_line(int line)
 {
+	line = 0;
+	current_tty->row = line;
 	/*current_tty->row = line;
 	current_tty->column = 0;
 	for (int i = 0; i <= 80; i++) {
