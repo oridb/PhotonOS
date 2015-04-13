@@ -150,7 +150,7 @@ void shell(char *str) {
 		int lasttick = get_tick();
 		while (true) {
 			if (get_tick() > lasttick) {
-				clear_line(tty_row);
+				clear_line(main_tty->row);
 			print_time();
 			}
 			if (((uint8_t*)stdin)[in_size] == 27) {
