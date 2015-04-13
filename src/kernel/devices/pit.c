@@ -10,6 +10,7 @@
 #include <system.h>
 #include <time.h>
 #include <task.h>
+#include <vga.h>
 
 int tick;
 
@@ -18,7 +19,10 @@ void timer_callback(__attribute__ ((unused)) registers_t *regs)
 	cli();
 	tick++;
 	update_time();
-	//flush_video();
+	if (vga_change) {
+		flush_video();
+		vga_change = 0;
+	}
 	//preempt(); useless, because it crashes
 	sti();
 }

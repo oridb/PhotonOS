@@ -9,7 +9,7 @@
 typedef struct page
 {
 	uint32_t present	 : 1;	// Page present in memory
-	uint32_t rw			: 1;	// Read-only if clear, readwrite if set
+	uint32_t rw			: 1;	// Read-only if clear, read write if set
 	uint32_t user		 : 1;	// Supervisor level only if clear
 	uint32_t accessed	: 1;	// Has the page been accessed since last refresh?
 	uint32_t dirty		: 1;	// Has the page been written to since last refresh?
@@ -78,7 +78,7 @@ void clear_frame(uint32_t frame_addr);
 uint32_t test_frame(uint32_t frame_addr);
 
 /**
-  * Frist free frame.
+  * First free frame.
   */
 uint32_t first_frame();
 

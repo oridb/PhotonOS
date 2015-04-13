@@ -9,6 +9,7 @@
 #include <system.h>
 
 uint16_t *video_memory;
+int volatile vga_change;
 
 enum vga_color
 {

@@ -43,7 +43,7 @@ void tty_clear();
 /**
   * Scroll the terminal.
   */
-void tty_scroll(int row, int column);
+void tty_scroll(int row);
 
 /**
   * Sets the foreground and background color of tty.
