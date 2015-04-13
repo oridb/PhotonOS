@@ -8,93 +8,70 @@
 #include <string.h>
 #include <stdio.h>
 #include <io.h>
+#include <kheap.h>
 
-void tty_init()
+tty_t *tty_init(tty_t *new)
 {
 	// basic variables of tty
-	tty_row = 0;
-	tty_column = 0;
-	tty_color = make_color(COLOR_LIGHT_GREY, COLOR_BLACK);
-	stdout = (uint16_t*) 0xB8000;
-	tabstop = 4;
-	tty_clear();
+	default_fg = COLOR_LIGHT_GREY;
+	new = (tty_t*) kmalloc(sizeof(tty_t));
+	new->row = 0;
+	new->column = 0;
+	new->bg = COLOR_RED;
+	new->tabstop = 4;
+	new->buffer.index = 0;
+	
+	for (int i = 0; i < STDIO_SIZE; i++) {
+		new->buffer.text[i] = 0;
+	}
+	
+	current_tty = new;
+	
+	return new;
 }
 
 void tty_clear()
 {
-	for ( size_t y = 0; y < VGA_HEIGHT; y++ )
-	{
-		for ( size_t x = 0; x < VGA_WIDTH; x++ )
-		{
-			const size_t index = y * VGA_WIDTH + x;
-			((uint16_t*) stdout)[index] = make_vgaentry(' ', tty_color);
-		}
+	for (int index = 0; index < 25; index++) {
+		tty_putchar('\n');
 	}
-	tty_row = 0;
-	tty_column = 0;
 }
 
-void tty_scroll()
+void tty_scroll(int row, int column)
 {
-	uint16_t blank = make_vgaentry(' ', tty_color);
+	uint16_t blank = make_vgaentry(' ', make_color(default_fg, current_tty->bg));
 	
-    if (tty_row >= 25)
+    if (row >= 25)
     {
-        int temp = tty_row - 25 + 1;
-        memcpy ((uint16_t*) stdout, (uint16_t*) stdout + temp * 80, (25 - temp) * 80 * 2);
+        int temp = row - 25 + 1;
+        memcpy ((uint16_t*) video_memory, (uint16_t*) video_memory + temp * 80, (25 - temp) * 80 * 2);
         
-        memsetw ((uint16_t*) stdout + (25 - temp) * 80, blank, 80);
-        tty_row = 25 - 1;
+        memsetw ((uint16_t*) video_memory + (25 - temp) * 80, blank, 80);
+        row = 25 - 1;
     }
 }
 
-void tty_setcolor(uint8_t color)
+void tty_setcolor(enum vga_color fg, enum vga_color bg)
 {
-	tty_color = color;
+	current_tty->bg = bg;
+	default_fg = fg;
 }
 
 void tty_putentryat(char c, uint8_t color, size_t x, size_t y)
 {
 	const size_t index = y * VGA_WIDTH + x;
-	((uint16_t*) stdout)[index] = make_vgaentry(c, color);
+	((uint16_t*) video_memory)[index] = make_vgaentry(c, color);
 }
 
 void tty_putchar(char c)
 {	
-	switch (c) {
-		case '\n':
-			++tty_row;
-			tty_column = -1;
-			break;
+	current_tty->buffer.text[current_tty->buffer.index] = c;
+	current_tty->buffer.fg[current_tty->buffer.index] = default_fg;
+	current_tty->buffer.index++;
 
-		case '\t':
-			for (int i = 0; i < tabstop; ++i) {
-				tty_putchar(' ');
-			}
-			break;
-
-		case '\b':
-			--tty_column;
-			tty_putentryat(' ', tty_color, tty_column, tty_row);
-			--tty_column;
-			break;
-
-		case '\a':
-			tty_writestring("\n[SYSTEM]: No support for '\\a' = sound char!\n");
-			// no sound support yet
-			break;
-
-		default:
-			tty_putentryat(c, tty_color, tty_column, tty_row);
-			break;
+	if (c == '\n') {
+		flush_video();
 	}
-	tty_column++;
-	if (tty_column == 80) { 
-		tty_row++;
-		tty_column = 0; 
-	}
-	tty_scroll();
-	tty_move_cursor();
 }
 
 void tty_writestring(const char* data)
@@ -106,12 +83,12 @@ void tty_writestring(const char* data)
 
 void tty_set_tab(int size)
 {
-	tabstop = size;
+	current_tty->tabstop = size;
 }
 
-void tty_move_cursor()
+void tty_move_cursor(int row, int column)
 {
-	uint16_t cursor_pos = tty_row * 80 + tty_column;
+	uint16_t cursor_pos = row * 80 + column - 1;
 	outb(0x3D4, 14);
 	outb(0x3D5, cursor_pos >> 8);
 	outb(0x3D4, 15);
@@ -120,22 +97,22 @@ void tty_move_cursor()
 
 void clear_line(int line)
 {
-	tty_row = line;
-	tty_column = 0;
+	/*current_tty->row = line;
+	current_tty->column = 0;
 	for (int i = 0; i <= 80; i++) {
 		tty_putchar(' ');
 	}
-	tty_column = 0;
-	tty_row = line;
-	tty_move_cursor();
+	current_tty->column = 0;
+	current_tty->row = line;
+	tty_move_cursor();*/
 }
 
 void tty_putchar_color(char c, enum vga_color fg)
 {
-	uint8_t temp_color = tty_color;
-	tty_color = make_color(fg, COLOR_BLACK);
+	uint8_t temp_color = default_fg;
+	default_fg = fg;
 	tty_putchar(c);
-	tty_color = temp_color;
+	default_fg = temp_color;
 }
 
 void wstr_color(const char* data, enum vga_color fg)

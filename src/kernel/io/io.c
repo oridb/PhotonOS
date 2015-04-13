@@ -8,6 +8,7 @@
 #include <io.h>
 #include <io.h>
 #include <isr.h>
+#include <tty.h>
 
 
 /* output byte */
@@ -59,14 +60,16 @@ void print_regs(registers_t *regs)
 
 int write_char(const char c)
 {
-	((unsigned char*) stdout)[out_crs] = c;
+	//((unsigned char*) stdout)[out_crs] = c;
+	//out_crs++;
+	tty_putchar(c);
 	return 0;
 }
 
 int write(const char *buf, size_t len)
 {
 	for ( size_t i = 0; i < len; i++ )
-		putchar((int) ((const char*) buf)[i]);
+		write_char((int) ((const char*) buf)[i]);
 	return 0;
 }
 
@@ -136,7 +139,6 @@ int printk(const char* restrict format, ...)
 	}
  
 	va_end(parameters);
- 
 	return written;
 }
 
