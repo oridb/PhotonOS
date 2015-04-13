@@ -8,17 +8,32 @@
 #include <stdint.h>
 #include <vga.h>
 #include <system.h>
+#include <stdio.h>
 
-size_t tty_row;
-size_t tty_column;
-uint8_t tty_color;
-int tabstop; 
+enum vga_color default_fg;
+
+typedef struct video_buff {
+	char text[STDIO_SIZE];
+	enum vga_color fg[STDIO_SIZE];
+	int index;
+} video_buff_t;
+
+typedef struct tty {
+	size_t row;
+	size_t column;
+	enum vga_color bg;
+	int tabstop;
+	video_buff_t buffer;
+} tty_t;
+
+tty_t *main_tty;
+tty_t *current_tty;
 
 /**
   * Init. the terminal. Set the video buffer, color the screen
   * and set text font.
   */
-void tty_init();
+tty_t *tty_init(tty_t *new);
 
 /**
   * Clear the screen.
@@ -28,12 +43,12 @@ void tty_clear();
 /**
   * Scroll the terminal.
   */
-void tty_scroll();
+void tty_scroll(int row, int column);
 
 /**
   * Sets the foreground and background color of tty.
   */
-void tty_setcolor(uint8_t color);
+void tty_setcolor(enum vga_color fg, enum vga_color bg);
 
 /**
   * Create a char entry at 'x', 'y' coordonates with specified color.
@@ -58,7 +73,7 @@ void tty_set_tab(int size);
 /**
   * Move system cursor.
   */
-void tty_move_cursor();
+void tty_move_cursor(int row, int column);
 
 /**
   * Clear line and set cursor to it.
