@@ -18,6 +18,7 @@ void timer_callback(__attribute__ ((unused)) registers_t *regs)
 	cli();
 	tick++;
 	update_time();
+	//flush_video();
 	//preempt(); useless, because it crashes
 	sti();
 }
