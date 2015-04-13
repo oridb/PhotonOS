@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include <system.h>
 
+uint16_t *video_memory;
+
 enum vga_color
 {
 	COLOR_BLACK = 0,
@@ -37,6 +39,21 @@ uint8_t make_color(enum vga_color fg, enum vga_color bg);
   * Create a entry for vga buffer.
   */
 uint16_t make_vgaentry(char c, uint8_t color);
+
+/**
+  * Flush the video memory from current tty buffer.
+  */
+void flush_video();
+
+/**
+  * Initialize video support and create a main tty.
+  */
+void init_video();
+
+/**
+  * Clear monitor screen.
+  */
+void clear_video();
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
