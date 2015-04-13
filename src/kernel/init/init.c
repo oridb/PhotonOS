@@ -17,26 +17,42 @@
 #include <stddef.h>
 #include <task.h>
 #include <multiboot.h>
+#include <init.h>
+#include <vga.h>
 
 #define FREQ 100
-uint8_t inbuffer[STDIN_SIZE];
 
 void init_stdio() {
+	inbuffer = (uint8_t*) kmalloc(sizeof(uint8_t) * STDIO_SIZE);
+	outbuffer = (char*) kmalloc(sizeof(char) * STDIO_SIZE);
+
 	stdin = (uint8_t*) inbuffer;
-	for (int i = 0; i <= STDIN_SIZE; i++) {
-		((uint8_t*)stdin)[i] = 0;
+	stdout = (char*) outbuffer;
+	
+	for (int i = 0; i <= STDIO_SIZE; i++) {
+		inbuffer[i] = 0;
+		outbuffer[i] = 0;
 	}
 } 
 
 void init(multiboot *mboot_ptr, uint32_t init_stack) {
 	init_esp = init_stack;
 
-	tty_init();
+	init_paging(mboot_ptr);
+
+	init_video();
 	printk("%s %s (%s) by %s. Copyright C 2015 %s. All rights reserved.\n", OS_Name, Version, Relase_Date, Author, Author);
 	printk("VGA driver was installed!\n");
 	printk("Initialize tty.   ");
 	wstr_color("[OK]\n", COLOR_GREEN);
-	
+
+	printk("Initialize paging.   ");
+	wstr_color("[OK]\n", COLOR_GREEN);
+	printk("Memory info:\n");
+	printk("\tKernel starts at: %x\n", (size_t)&kernel_start);
+	printk("\tKernel ends at: %x\n", (size_t)&kernel_end);
+	printk("\tRAM: %d MB\n", mem_size_mb);
+
 	printk("Initialize stdio (allow using of stdio header).   ");
 	init_stdio();
 	wstr_color("[OK]\n", COLOR_GREEN);
@@ -57,14 +73,6 @@ void init(multiboot *mboot_ptr, uint32_t init_stack) {
 	install_keyboard();
 	wstr_color("[OK]\n", COLOR_GREEN);
 	
-	init_paging(mboot_ptr);
-	printk("Initialize paging.   ");
-	wstr_color("[OK]\n", COLOR_GREEN);
-	printk("Memory info:\n");
-	printk("\tKernel starts at: %x\n", (size_t)&kernel_start);
-	printk("\tKernel ends at: %x\n", (size_t)&kernel_end);
-	printk("\tRAM: %d MB\n", mem_size_mb);
-	
 	/* tasking is useless, because switcher crashes every time
 	init_tasking();
 	
@@ -75,14 +83,14 @@ void init(multiboot *mboot_ptr, uint32_t init_stack) {
 	task_t *clock_task = create_task(clock_task, &update_time, eflags, cr3);
 	*/
 
-	wstr_color("\nDONE!", COLOR_GREEN);
+	wstr_color("\nDONE!\n", COLOR_GREEN);
 	sti();
 	
 	getch();
 }
 
 void welcome() {
-	tty_clear();	
+		
 	
 	wstr_color("      |\\     /|(  ____ \\( \\      (  ____ \\(  ___  )(       )(  ____ \\\n", COLOR_RED);
 	wstr_color("      | )   ( || (    \\/| (      | (    \\/| (   ) || () () || (    \\/\n", COLOR_RED);
