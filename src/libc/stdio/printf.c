@@ -46,14 +46,14 @@ int printf(const char* restrict format, ...)
 		} else if ( *format == 's' ) {
 			format++;
 			const char* s = va_arg(parameters, const char*);
-			call(1, s, strlen(s), 0, 0, 0);
+			call(1, (uint32_t) s, strlen(s), 0, 0, 0);
 		} else if ( *format == 'd' ) {
 			format++;
 			int n = va_arg(parameters, int);
 			if (n) {
 				char s[intlen(n, 10)];
 				itoa(s, n, 10);
-				call(1, s, strlen(s), 0, 0, 0);
+				call(1, (uint32_t) s, strlen(s), 0, 0, 0);
 			} else {
 				printf("0");
 			}
@@ -63,7 +63,7 @@ int printf(const char* restrict format, ...)
 			if (n) {
 				char s[intlen(n, 16)];
 				itoa(s, n, 16);
-				call(1, s, strlen(s), 0, 0, 0);
+				call(1, (uint32_t) s, strlen(s), 0, 0, 0);
 			} else {
 				printf("0x0");
 			}
