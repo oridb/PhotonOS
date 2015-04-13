@@ -21,7 +21,8 @@
 #include <multiboot.h>
 
 #define FREQ 100
-uint8_t inbuffer[STDIN_SIZE];
+uint8_t *inbuffer;
+char *outbuffer;
 
 /**
   * Initialize standard i/o.
