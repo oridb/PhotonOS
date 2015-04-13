@@ -6,7 +6,7 @@
 #endif
 #include <stddef.h>
 #include <stdint.h>
-#define STDIN_SIZE 4096
+#define STDIO_SIZE 4096
 
 void* stdout;
 void* stdin;

@@ -4,5 +4,5 @@
 
 void putchar(char c)
 {	
-	tty_putchar(c);
+	write_char(c);
 }
