@@ -28,12 +28,19 @@ typedef struct tty {
 
 tty_t *main_tty;
 tty_t *current_tty;
+tty_t **ttys;
+int tty_index;
 
 /**
-  * Init. the terminal. Set the video buffer, color the screen
+  * Initialize the terminal. Set the video buffer, color the screen
   * and set text font.
   */
 tty_t *tty_init(tty_t *new);
+
+/**
+  * Switches current tty to the specified tty. (tty_t *other)
+  */
+void switch_tty(tty_t *other);
 
 /**
   * Clear the screen.
@@ -43,7 +50,7 @@ void tty_clear();
 /**
   * Scroll the terminal.
   */
-void tty_scroll(int row);
+int tty_scroll(int row);
 
 /**
   * Sets the foreground and background color of tty.
@@ -74,11 +81,6 @@ void tty_set_tab(int size);
   * Move system cursor.
   */
 void tty_move_cursor(int row, int column);
-
-/**
-  * Clear line and set cursor to it.
-  */
-void clear_line(int line);
 
 /**
   * Basic function for write colored char.
