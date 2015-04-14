@@ -28,46 +28,49 @@ void flush_video()
 	uint8_t color;
 	
 	for (int i = 0; i < STDIO_SIZE && c != 0; i++) {
-	c = current_tty->buffer.text[i];
-	color = make_color(current_tty->buffer.fg[i], current_tty->bg);
+		c = current_tty->buffer.text[i];
+		color = make_color(current_tty->buffer.fg[i], current_tty->bg);
 
-	switch (c) {
-		case '\n':
-			++vga_row;
-			vga_column = -1;
-			break;
+		switch (c) {
+			case '\n':
+				++vga_row;
+				vga_column = -1;
+				break;
 
-		case '\t':
-			for (int i = 0; i < current_tty->tabstop; ++i) {
-				tty_putentryat(' ', color, vga_column, vga_row);
-				vga_column++;
-				if (vga_column == 80) { 
-					vga_row++;
-					vga_column = 0; 
+			case '\t':
+				for (int i = 0; i < current_tty->tabstop; ++i) {
+					tty_putentryat(' ', color, vga_column, vga_row);
+					vga_column++;
+					if (vga_column == 80) {
+						vga_row++;
+						vga_column = 0;
+					}
 				}
-			}
-			break;
+				break;
 
-		case '\b':
-			--vga_column;
-			tty_putentryat(' ', color, vga_column, vga_row);
-			--vga_column;
-			break;
+			case '\b':
+				--vga_column;
+				tty_putentryat(' ', color, vga_column, vga_row);
+				--vga_column;
+				break;
 
-		case '\a':
-			// no sound support yet
-			break;
+			case '\a':
+				// no sound support yet
+				break;
 
-		default:
-			tty_putentryat(c, color, vga_column, vga_row);
-			break;
-	}
-	vga_column++;
-	if (vga_column == 80) { 
-		vga_row++;
-		vga_column = 0; 
-	}
-	tty_scroll(vga_row);
+			default:
+				tty_putentryat(c, color, vga_column, vga_row);
+				break;
+		}
+		vga_column++;
+		if (vga_column == 80) {
+			vga_row++;
+			vga_column = 0;
+		}
+		if (tty_scroll(vga_row)) {
+			vga_row = 24;
+			vga_column = 0;
+		}
 	}
 	tty_move_cursor(vga_row, vga_column);
 }
