@@ -20,6 +20,8 @@
 #include <init.h>
 #include <vga.h>
 
+extern int detect_cpu(void);
+
 #define FREQ 100
 
 void init_stdio() {
@@ -46,7 +48,7 @@ void init(multiboot *mboot_ptr, uint32_t init_stack) {
 	install_keyboard();
 	init_video();
 
-	ttys = (tty_t*) kmalloc(sizeof(tty_t) * 3);
+	ttys = (tty_t**) kmalloc(sizeof(tty_t) * 3);
 	ttys[0] = main_tty;
 	ttys[1] = tty_init(ttys[1]);
 	ttys[2] = tty_init(ttys[2]);
@@ -54,6 +56,9 @@ void init(multiboot *mboot_ptr, uint32_t init_stack) {
 	current_tty = main_tty;
 
 	printk("%s %s (%s) by %s. Copyright C 2015 %s. All rights reserved.\n", OS_Name, Version, Relase_Date, Author, Author);
+	detect_cpu();
+	printk("\n-------------------------------------------------------------------\n");
+
 	printk("VGA driver was installed!\n");
 	printk("Initialize tty.   ");
 	wstr_color("[OK]\n", COLOR_GREEN);
