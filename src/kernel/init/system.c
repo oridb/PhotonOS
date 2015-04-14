@@ -118,9 +118,10 @@ static void testing_shell(char *str)
 
 void panic(char *msg, int line, char *file)
 {
+	cli();
 	printk("[KERNEL PANIC]");
 	printk("%s. Error at line %d in file %s.", msg, line, file);
-	cli();
+	flush_video();
 	keep_running();
 }
 
@@ -147,20 +148,7 @@ void shell(char *str) {
 		printk("Tick: %d\n", get_tick());
 	
 	} else if (!strcmp(str, "clock")) {
-		int lasttick = get_tick();
-		while (true) {
-			if (get_tick() > lasttick) {
-				clear_line(main_tty->row);
-			print_time();
-			}
-			if (((uint8_t*)stdin)[in_size] == 27) {
-				printk("\n");
-				((uint8_t*)stdin)[in_size] = 0;
-				break;
-			}
-			lasttick = get_tick();
-		}
-		
+		printk("WARN: no clock yet");
 	} else if (!strcmp(str, "clear")) {
 		tty_clear();
 		
@@ -176,6 +164,14 @@ void shell(char *str) {
 		memcpy(to_write, "Let's write this...\n\0", len + 1);
 		call(1, (uint32_t) to_write, (uint32_t) len, 0, 0, 0);
 		
+	} else if (!strcmp(str, "tty")) {
+		++tty_index;
+		if (tty_index == 3) {
+			tty_index = 0;
+		}
+		current_tty = ttys[tty_index];
+		printk("\n[SYS] Switched to tty %d.\n", tty_index);
+
 	} else if (!strcmp(str, "reboot")) {
 		printk("System will reboot...");
 		reboot();

@@ -20,7 +20,7 @@
 
 void kmain(multiboot *mboot_ptr, uint32_t init_stack) {
 	init(mboot_ptr, init_stack);
-	//welcome();
+	welcome();
 	login();
 	prompt();
 	panic("Shell exited!", __LINE__, __FILE__);

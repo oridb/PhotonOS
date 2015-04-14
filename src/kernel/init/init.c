@@ -38,9 +38,21 @@ void init_stdio() {
 void init(multiboot *mboot_ptr, uint32_t init_stack) {
 	init_esp = init_stack;
 
+	init_gdt();
+	init_idt();
 	init_paging(mboot_ptr);
-
+	init_stdio();
+	init_timer(FREQ);
+	install_keyboard();
 	init_video();
+
+	ttys = (tty_t*) kmalloc(sizeof(tty_t) * 3);
+	ttys[0] = main_tty;
+	ttys[1] = tty_init(ttys[1]);
+	ttys[2] = tty_init(ttys[2]);
+	tty_index = 0;
+	current_tty = main_tty;
+
 	printk("%s %s (%s) by %s. Copyright C 2015 %s. All rights reserved.\n", OS_Name, Version, Relase_Date, Author, Author);
 	printk("VGA driver was installed!\n");
 	printk("Initialize tty.   ");
@@ -54,23 +66,18 @@ void init(multiboot *mboot_ptr, uint32_t init_stack) {
 	printk("\tRAM: %d MB\n", mem_size_mb);
 
 	printk("Initialize stdio (allow using of stdio header).   ");
-	init_stdio();
 	wstr_color("[OK]\n", COLOR_GREEN);
 	
 	printk("Initialize GDT.   ");
-	init_gdt();
 	wstr_color("[OK]\n", COLOR_GREEN);
 	
 	printk("Initialize IDT and interrupts.   ");
-	init_idt();
 	wstr_color("[OK]\n", COLOR_GREEN);
 	
 	printk("Install timer and clock.   ");
-	init_timer(FREQ);
 	wstr_color("[OK]\n", COLOR_GREEN);
 	
 	printk("Install keyboard support.   ");
-	install_keyboard();
 	wstr_color("[OK]\n", COLOR_GREEN);
 	
 	/* tasking is useless, because switcher crashes every time
@@ -90,7 +97,7 @@ void init(multiboot *mboot_ptr, uint32_t init_stack) {
 }
 
 void welcome() {
-		
+	tty_clear();
 	
 	wstr_color("      |\\     /|(  ____ \\( \\      (  ____ \\(  ___  )(       )(  ____ \\\n", COLOR_RED);
 	wstr_color("      | )   ( || (    \\/| (      | (    \\/| (   ) || () () || (    \\/\n", COLOR_RED);
