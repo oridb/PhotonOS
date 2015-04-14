@@ -6,6 +6,7 @@
 #endif
 #include <stddef.h>
 #include <stdint.h>
+#include <sys/cdefs.h>
 #define STDIO_SIZE 4096
 
 void* stdout;
@@ -14,27 +15,32 @@ volatile int in_size;
 int out_crs;
 
 /**
-  * Puts a char on the screen.
+  * Puts a char in standard out buffer.
   */
 void putchar(char c);
 
 /**
-  * Write a string on the screen using formatting.
+  * Write a string in standard out buffer using formatting.
   */
 int printf(const char* restrict format, ...);
 
 /**
-  * Gets a char from keyboard and print it.
+  * Write a string in standard out buffer and adds NEWLINE at end. 
+  */
+int puts(const char*);
+
+/**
+  * Gets a char from standard input and print it.
   */
 int getchar();
 
 /**
-  * Gets a char from keyboard and don't print it.
+  * Gets a char from standard input and don't print it.
   */
 int getch();
 
 /**
-  * Get a string from keyboard until NEWLINE char is detected.
+  * Get a string from standard input until NEWLINE char is detected.
   */
 char *gets(char *str);
 

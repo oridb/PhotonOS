@@ -4,6 +4,7 @@
 #include <system.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <sys/cdefs.h>
 
 typedef int8_t (*lessthan_pred_t)(type_t, type_t);
 
