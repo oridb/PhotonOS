@@ -17,7 +17,7 @@ tty_t *tty_init(tty_t *new)
 	new = (tty_t*) kmalloc(sizeof(tty_t));
 	new->row = 0;
 	new->column = 0;
-	new->bg = COLOR_RED;
+	new->bg = COLOR_BLACK;
 	new->tabstop = 4;
 	new->buffer.index = 0;
 	
@@ -30,14 +30,24 @@ tty_t *tty_init(tty_t *new)
 	return new;
 }
 
-void tty_clear()
+void switch_tty(tty_t *other)
 {
-	for (int index = 0; index < 25; index++) {
-		tty_putchar('\n');
-	}
+	current_tty = other;
 }
 
-void tty_scroll(int row)
+void tty_clear()
+{
+	for (int index = 0; index < STDIO_SIZE; index++) {
+		current_tty->buffer.text[index] = 0;
+	}
+	current_tty->row = 0;
+	current_tty->column = 0;
+	current_tty->bg = COLOR_BLACK;
+	current_tty->tabstop = 4;
+	current_tty->buffer.index = 0;
+}
+
+int tty_scroll(int row)
 {
 	uint16_t blank = make_vgaentry(' ', make_color(default_fg, current_tty->bg));
 	
@@ -48,7 +58,9 @@ void tty_scroll(int row)
         
         memsetw ((uint16_t*) video_memory + (25 - temp) * 80, blank, 80);
         row = 25 - 1;
+        return 1;
     }
+    return 0;
 }
 
 void tty_setcolor(enum vga_color fg, enum vga_color bg)
@@ -69,6 +81,10 @@ void tty_putchar(char c)
 	current_tty->buffer.fg[current_tty->buffer.index] = default_fg;
 	current_tty->buffer.index++;
 	vga_change = 1;
+
+	if (current_tty->buffer.index >= STDIO_SIZE) {
+		tty_clear();
+	}
 }
 
 void tty_writestring(const char* data)
@@ -90,20 +106,6 @@ void tty_move_cursor(int row, int column)
 	outb(0x3D5, cursor_pos >> 8);
 	outb(0x3D4, 15);
 	outb(0x3D5, cursor_pos);
-}
-
-void clear_line(int line)
-{
-	line = 0;
-	current_tty->row = line;
-	/*current_tty->row = line;
-	current_tty->column = 0;
-	for (int i = 0; i <= 80; i++) {
-		tty_putchar(' ');
-	}
-	current_tty->column = 0;
-	current_tty->row = line;
-	tty_move_cursor();*/
 }
 
 void tty_putchar_color(char c, enum vga_color fg)
